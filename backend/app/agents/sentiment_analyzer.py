@@ -26,42 +26,66 @@ class SentimentAnalyzer:
         # Check environment variable to decide which fetcher to use
         # Default to False (Mock) if not set
         use_real_data = os.getenv("USE_REAL_DATA", "False").lower() == "true"
+        logger.info(f"SentimentAnalyzer initialized. USE_REAL_DATA={use_real_data} (Raw: {os.getenv('USE_REAL_DATA')})")
+        
         self.fetcher = get_sentiment_fetcher(use_real_data)
         self.mock_fetcher = MockSentimentFetcher()
 
     async def analyze_tweet(self, text: str, fund_name: str) -> Dict:
-        """Analyze sentiment of a single tweet (helper method)"""
-        # This might still be useful if the fetcher returns raw tweets
-        text_lower = text.lower()
-
-        bullish_count = sum(1 for word in BULLISH_KEYWORDS if word in text_lower)
-        bearish_count = sum(1 for word in BEARISH_KEYWORDS if word in text_lower)
-
-        if bullish_count > bearish_count:
-            sentiment = "positive"
-            score = min(1.0, bullish_count / 5)
-        elif bearish_count > bullish_count:
-            sentiment = "negative"
-            score = min(1.0, bearish_count / 5)
-        else:
-            sentiment = "neutral"
-            score = 0.5
-
-        return {
-            "text": text[:100],
-            "fund": fund_name,
-            "sentiment": sentiment,
-            "score": score,
-            "timestamp": datetime.now().isoformat(),
-        }
+        """Analyze sentiment of a single tweet/text using TextBlob"""
+        try:
+            from textblob import TextBlob
+            blob = TextBlob(text)
+            polarity = blob.sentiment.polarity # -1.0 to 1.0
+            
+            if polarity > 0.1:
+                sentiment = "positive"
+                score = polarity
+            elif polarity < -0.1:
+                sentiment = "negative"
+                score = abs(polarity)
+            else:
+                sentiment = "neutral"
+                score = 0.5
+                
+            return {
+                "text": text[:100],
+                "fund": fund_name,
+                "sentiment": sentiment,
+                "score": score,
+                "timestamp": datetime.now().isoformat(),
+            }
+        except ImportError:
+            # Fallback to simple keyword matching if TextBlob not installed
+            text_lower = text.lower()
+            bullish_count = sum(1 for word in BULLISH_KEYWORDS if word in text_lower)
+            bearish_count = sum(1 for word in BEARISH_KEYWORDS if word in text_lower)
+    
+            if bullish_count > bearish_count:
+                sentiment = "positive"
+                score = min(1.0, bullish_count / 5)
+            elif bearish_count > bullish_count:
+                sentiment = "negative"
+                score = min(1.0, bearish_count / 5)
+            else:
+                sentiment = "neutral"
+                score = 0.5
+    
+            return {
+                "text": text[:100],
+                "fund": fund_name,
+                "sentiment": sentiment,
+                "score": score,
+                "timestamp": datetime.now().isoformat(),
+            }
 
     async def fetch_sentiment_for_fund(self, fund_name: str) -> Dict:
         """Fetch aggregated sentiment for a fund from X and Farcaster"""
         try:
             result = await self.fetcher.fetch_sentiment(fund_name)
             
-            if result is None:
-                 result = await self.mock_fetcher.fetch_sentiment(fund_name)
+            # if result is None:
+            #      result = await self.mock_fetcher.fetch_sentiment(fund_name)
                  
             if result:
                 self.sentiment_cache[fund_name] = result

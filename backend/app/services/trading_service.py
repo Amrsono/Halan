@@ -109,30 +109,54 @@ class TradingService:
 
     def execute_live_trade(self, fund_name: str, action: str, price: float, quantity: float) -> Optional[Dict]:
         """
-        Execute a REAL trade on the exchange.
+        Execute a REAL-DATA SIMULATION trade.
+        Uses real-time prices but executes internally (Paper Trading with Real Data).
         """
         total_amount = price * quantity
         
         # 1. Critical Validation
+        # Check against 'live' limits even though it's simulation, to mimic production constraints
         validation = self.validate_trade(total_amount, is_live=True)
         if not validation["valid"]:
-            logger.error(f"⛔ LIVE TRADE BLOCKED: {validation['reason']}")
+            logger.error(f"⛔ LIVE SIMULATION BLOCKED: {validation['reason']}")
             return None
             
-        # 2. Execution Logic (Placeholder for future API integration)
-        logger.info(f"🚀 EXECUTING LIVE TRADE: {action} {quantity} of {fund_name} via Broker API...")
+        # 2. Execution Logic (Simulation)
+        logger.info(f"🚀 EXECUTING LIVE SIMULATION: {action} {quantity} of {fund_name} @ {price}")
         
-        # TODO: Call Broker/Exchange API here
-        # success = broker_api.place_order(...)
-        success = False # Safety default
-        
-        if success:
-            logger.info("✅ Live trade confirmed by broker")
-            # Record to DB...
-        else:
-            logger.error("❌ Live trade failed or not implemented")
+        try:
+            # Create trade record - Status 'executed' so it shows up in history as done
+            trade = Trade(
+                fund_name=fund_name,
+                action=action,
+                quantity=round(quantity, 4),
+                price=price,
+                total=round(total_amount, 2),
+                status="executed", 
+                timestamp=datetime.now()
+            )
             
-        return None
+            self.db.add(trade)
+            self.db.commit()
+            self.db.refresh(trade)
+            
+            logger.info("✅ Live simulation trade confirmed and recorded in DB")
+            
+            return {
+                "id": trade.id,
+                "fund": trade.fund_name,
+                "action": trade.action,
+                "price": trade.price,
+                "quantity": trade.quantity,
+                "total": trade.total,
+                "status": trade.status,
+                "timestamp": trade.timestamp.isoformat()
+            }
+            
+        except Exception as e:
+            logger.error(f"❌ Live simulation failed to record: {e}")
+            self.db.rollback()
+            return None
     
     def get_recent_trades(self, limit: int = 10):
         """Get recent trades from database"""

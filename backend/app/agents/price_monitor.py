@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Dict, List
 import aiohttp
 from bs4 import BeautifulSoup
-from app.services.price_fetcher import get_price_fetcher, MockPriceFetcher
+from app.services.price_fetcher import get_price_fetcher
 
 logger = logging.getLogger(__name__)
 
@@ -24,13 +24,12 @@ class PriceMonitor:
     def __init__(self):
         self.prices = {}
         self.price_history = {}
-        # Check environment variable to decide which fetcher to use
-        # Default to True (Real) now that we have proxies
-        use_real_data = os.getenv("USE_REAL_DATA", "True").lower() == "true"
+        # Enforce Real Data for Production Readiness
+        # We want to fail if real data is not available, rather than silently falling back to mock
+        use_real_data = True
         self.fetcher = get_price_fetcher(use_real_data)
         
-        # Fallback to mock if real fetcher fails or returns None is handled in fetch logic
-        self.mock_fetcher = MockPriceFetcher()
+        # Removed mock_fetcher to prevent accidental usage
 
     async def fetch_price(self, fund_name: str) -> Dict:
         """Fetch current price for a fund"""
@@ -42,9 +41,8 @@ class PriceMonitor:
 
             price_info = await self.fetcher.fetch_price(fund_name, fund_data)
             
-            # Fallback to mock if real fetcher returns nothing (e.g. not implemented yet)
-            if price_info is None:
-                price_info = await self.mock_fetcher.fetch_price(fund_name, fund_data)
+            # Note: We do NOT fallback to mock data here if real data fails.
+            # In production, we want to know if data is missing, not see fake numbers.
 
             if price_info:
                 self.prices[fund_name] = price_info

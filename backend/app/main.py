@@ -28,13 +28,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+import asyncio
+from app.orchestrator import start_continuous_monitoring
+
 # Initialize database
 @app.on_event("startup")
 async def startup_event():
-    """Initialize database on startup"""
+    """Initialize database and start background tasks"""
     logger.info("Initializing database...")
     init_db()
     logger.info("Database initialized")
+    
+    # Start background monitoring loop
+    logger.info("Starting background monitoring...")
+    asyncio.create_task(start_continuous_monitoring())
 
 
 # Include routers

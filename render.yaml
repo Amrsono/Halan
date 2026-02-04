@@ -1,0 +1,52 @@
+services:
+  - type: web
+    name: halan-invest-backend
+    env: docker
+    repo: https://github.com/Amrsono/Halan
+    dockerfilePath: ./backend/Dockerfile
+    autoDeployOnPush: true
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_ENV
+        value: production
+      - key: DEBUG
+        value: false
+      - key: USE_REAL_DATA
+        value: true
+      - key: DB_HOST
+        fromDatabase:
+          name: halan-postgres
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: halan-postgres
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: halan-postgres
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: halan-postgres
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: halan-postgres
+          property: dbName
+
+  - type: web
+    name: halan-invest-frontend
+    env: docker
+    repo: https://github.com/Amrsono/Halan
+    dockerfilePath: ./frontend/Dockerfile
+    autoDeployOnPush: true
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://halan-invest-backend.onrender.com/api
+
+  - type: pserv
+    name: halan-postgres
+    env: docker
+    repo: https://github.com/Amrsono/Halan
+    plan: free
+    ipAllowList: []

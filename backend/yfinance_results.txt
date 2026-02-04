@@ -1,10 +1,10 @@
 Testing Yahoo Finance Tickers:
 ------------------------------
-❌ AZG.CA: No data found
-❌ AZO.CA: No data found
-❌ EGX30.CA: No data found
-✅ ^CASE30: Found! Price: 49225.8984375
-✅ EGP=X: Found! Price: 46.912498474121094
-❌ AXA.CA: No data found
-✅ COMI.CA: Found! Price: 133.0
+❌ AZG.CA: Error - module 'yfinance' has no attribute 'Ticker'
+❌ AZO.CA: Error - module 'yfinance' has no attribute 'Ticker'
+❌ EGX30.CA: Error - module 'yfinance' has no attribute 'Ticker'
+❌ ^CASE30: Error - module 'yfinance' has no attribute 'Ticker'
+❌ EGP=X: Error - module 'yfinance' has no attribute 'Ticker'
+❌ AXA.CA: Error - module 'yfinance' has no attribute 'Ticker'
+❌ COMI.CA: Error - module 'yfinance' has no attribute 'Ticker'
 ------------------------------
