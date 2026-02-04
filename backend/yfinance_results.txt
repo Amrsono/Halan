@@ -1,0 +1,10 @@
+Testing Yahoo Finance Tickers:
+------------------------------
+❌ AZG.CA: No data found
+❌ AZO.CA: No data found
+❌ EGX30.CA: No data found
+✅ ^CASE30: Found! Price: 49225.8984375
+✅ EGP=X: Found! Price: 46.912498474121094
+❌ AXA.CA: No data found
+✅ COMI.CA: Found! Price: 133.0
+------------------------------

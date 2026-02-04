@@ -1,0 +1,19 @@
+Testing Zeed Gold: https://zeed.tech/funds/az-gold
+Status: 404
+Result: Failed
+------------------------------
+Testing Zeed Opps: https://zeed.tech/funds/az-opportunities
+Status: 404
+Result: Failed
+------------------------------
+Testing Mubasher Gold: https://www.mubasher.info/markets/EGX/funds/AZG
+Status: 404
+Result: Failed
+------------------------------
+Testing Mubasher Opps: https://www.mubasher.info/markets/EGX/funds/AZO
+Status: 404
+Result: Failed
+------------------------------
+Testing Thndr Gold: https://thndr.app/product/AZG
+Result: Error HTTPSConnectionPool(host='thndr.app', port=443): Read timed out. (read timeout=10)
+------------------------------

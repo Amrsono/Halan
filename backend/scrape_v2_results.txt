@@ -1,0 +1,21 @@
+Testing EGX Funds: https://egx.com.eg/en/MutualFunds.aspx
+Status: 200
+Content Length: 6290
+Result: Success (But keywords missing??)
+------------------------------
+Testing Mubasher Gold: https://www.mubasher.info/markets/EGX/funds/AZG
+Status: 404
+Result: Failed
+------------------------------
+Testing Mubasher Opps: https://www.mubasher.info/markets/EGX/funds/AZO
+Status: 404
+Result: Failed
+------------------------------
+Testing Thndr Gold: https://thndr.app/product/AZG
+Status: 404
+Result: Failed
+------------------------------
+Testing Thndr Opps: https://thndr.app/product/AZO
+Status: 404
+Result: Failed
+------------------------------
