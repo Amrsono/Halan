@@ -5,7 +5,7 @@ Real-time monitoring and sentiment analysis platform for Egyptian investment fun
 ## 📋 Features
 
 ### 🎯 Core Agents
-- **Price Monitor Agent**: Real-time fund price tracking with arbitrage detection
+- **Price Monitor Agent**: Real-time fund price tracking with detection
 - **Sentiment Analyzer Agent**: Social sentiment analysis from X (Twitter) & Farcaster
 - **Recommendation Engine**: AI-driven buy/sell recommendations based on technical & sentiment signals
 
